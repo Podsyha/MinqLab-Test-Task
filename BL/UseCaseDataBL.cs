@@ -27,6 +27,7 @@ public class UseCaseDataBL : IUseCaseDataBL
     public async Task SendEmails(EmailDataDto model)
     {
         model.Throw().ThrowIfNull();
+        model.recipients.Throw().IfEmpty();
 
         foreach (var recipient in model.recipients)
         {
@@ -40,7 +41,7 @@ public class UseCaseDataBL : IUseCaseDataBL
 
             try
             {
-                await _emailService.SendAsync(recipient, subject: model.subject, model.body);
+                await _emailService.SendAsync(recipient, subject: model.subject, message: model.body);
                 entity.SetOkResult();
                 await _emailDataRepository.AddEmail(entity);
             }
